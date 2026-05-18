@@ -1,0 +1,149 @@
+/* income.css */
+.income-layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.income-column {
+    flex: 1;
+    min-width: 300px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.income-header-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.income-header-block h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Счета (Новый блок) */
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.account-item {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.account-info-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.account-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.account-balance {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 10px;
+}
+
+/* Категории */
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+.category-item.archived {
+    opacity: 0.5;
+    background: #e5e7eb;
+}
+
+.category-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Списки транзакций */
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 550px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+}
+.transaction-item.from-calendar {
+    border-left: 4px solid var(--accent);
+    background: #fdfcff;
+}
+.transaction-item.archived {
+    opacity: 0.5;
+    background: #f3f4f6;
+}
+
+.trans-title { font-weight: 600; font-size: 0.95rem; }
+.trans-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.trans-amount { font-weight: 700; color: var(--success); font-size: 1rem; }
+.trans-actions { display: flex; gap: 3px; margin-left: 10px;}
+
+.action-icon-btn {
+    background: none; border: none; cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text-muted);
+}
+.action-icon-btn:hover { background: var(--border-color); color: var(--text-main); }
+.action-icon-btn.delete:hover { color: var(--danger); background: #fee2e2; }
+
+select, input[type="text"], input[type="number"] {
+    width: 100%; background: var(--bg-main); border: 1px solid var(--border-color); padding: 10px; border-radius: 6px; outline: none; font-size: 0.95rem;
+}
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: var(--accent); background: #fff;
+}
+
+.badge-calendar {
+    font-size: 0.65rem; background: var(--accent); color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px; display: inline-block; vertical-align: middle;
+}
+
+.badge-account {
+    font-size: 0.7rem; background: #e0e7ff; color: #4338ca; padding: 2px 6px; border-radius: 4px; font-weight: 500;
+}

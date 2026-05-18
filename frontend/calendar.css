@@ -1,0 +1,84 @@
+/* calendar.css */
+.calendar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+.calendar-nav-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.view-switcher { display: flex; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background: var(--bg-card); }
+.view-btn { background: none; border: none; color: var(--text-muted); padding: 8px 16px; cursor: pointer; font-size: 0.85rem; }
+.view-btn.active { background: var(--accent); color: #fff; }
+
+/* Сетка календаря */
+.calendar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.month-view { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; background: var(--bg-card); display: flex; flex-direction: column; justify-content: space-between; min-height: 380px; }
+.month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+.month-title { font-weight: 600; font-size: 1.1rem; }
+
+.days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+.day-label { color: var(--text-muted); font-weight: 500; font-size: 0.8rem; padding-bottom: 4px; }
+
+/* Ячейка дня */
+.day {
+    background: var(--status-normal); border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 4px; min-height: 58px;
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+    cursor: pointer; position: relative; transition: transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+}
+.day:hover:not(.empty) { transform: scale(1.03); border-color: var(--accent); }
+.day.empty { background: transparent !important; border-color: transparent; cursor: default; }
+.day-num { font-size: 0.9rem; font-weight: 600; z-index: 2; }
+.day-coef { position: absolute; top: 2px; right: 4px; font-size: 0.65rem; font-weight: bold; color: #1e3a8a; z-index: 2; }
+.day-money { font-size: 0.7rem; font-weight: 700; color: #047857; z-index: 2; margin-top: auto; white-space: nowrap; }
+.day.today { border: 2px solid var(--accent); }
+
+.dj-icon { position: absolute; top: 2px; left: 4px; font-size: 0.65rem; color: #5b21b6; z-index: 2; }
+.extra-icon { position: absolute; top: 14px; left: 4px; font-size: 0.6rem; color: var(--success); z-index: 2; }
+
+.month-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; font-size: 0.8rem; }
+.month-rate { color: var(--text-muted); font-style: italic; }
+.month-total { font-weight: 600; color: #10b981; }
+
+/* Модальные окна */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); padding: 10px; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--bg-card); border-radius: 12px; padding: 20px; width: 100%; max-width: 420px; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+.form-group { margin-bottom: 12px; }
+.form-group label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; }
+input[type="number"], input[type="text"] { width: 100%; background: var(--bg-main); border: 1px solid var(--border-color); padding: 12px 10px; border-radius: 6px; outline: none; font-size: 0.95rem; -webkit-appearance: none; }
+
+.checkbox-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px; }
+.checkbox-item { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; cursor: pointer; padding: 4px 0; }
+.checkbox-item input { width: 20px; height: 20px; cursor: pointer; }
+
+.dynamic-section { display: none; margin-top: 10px; background: #fafafa; padding: 10px; border-radius: 6px; border: 1px dashed var(--border-color); }
+.dynamic-section.active { display: block; }
+
+.add-extra-btn { color: var(--success); border-color: var(--success); cursor: pointer; background: none; border: none; font-size: 0.95rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; margin-top: 15px; padding: 6px 0; }
+
+/* Строки доп. доходов */
+.extra-income-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+.extra-income-row input[type="text"] { flex: 2; }
+.extra-income-row input[type="number"] { flex: 1.2; }
+.remove-extra-row { background: none; border: none; color: #ef4444; cursor: pointer; padding: 8px; font-size: 1.1rem; }
+
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 25px; }
+
+/* Адаптивность календаря */
+@media (max-width: 992px) {
+    .calendar-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (max-width: 768px) {
+    .calendar-controls { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .calendar-nav-group { width: 100%; justify-content: space-between; }
+    .calendar-grid { grid-template-columns: 1fr; gap: 16px; }
+    .month-view { min-height: auto; padding: 14px; }
+}
+@media (max-width: 400px) {
+    .days-grid { gap: 4px; }
+    .day { min-height: 50px; padding: 4px 2px; }
+    .day-num { font-size: 0.8rem; }
+    .day-money { font-size: 0.6rem; }
+    .day-coef, .dj-icon, .extra-icon { display: none; }
+    .extra-income-row { flex-wrap: wrap; background: #f9fafb; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); }
+    .extra-income-row input[type="text"] { flex: 100%; }
+    .extra-income-row input[type="number"] { flex: 1; }
+}

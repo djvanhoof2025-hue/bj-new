@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовый Трекер — Управление</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ... все стили без изменений ... */
+        :root {
+            --bg-main: #f4f5f7;
+            --bg-card: #ffffff;
+            --accent: #7c3aed;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --status-weekend: #fca5a5;    
+            --status-sick: #9ca3af;       
+            --status-dj: #c084fc;         
+            --status-low: #fde047;        
+            --status-high: #86efac;       
+            --status-normal: #fafafa;     
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
+        nav { width: 260px; background-color: var(--bg-card); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 30px 20px; flex-shrink: 0; }
+        .logo { font-size: 1.2rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .logo i { color: var(--accent); }
+        .nav-links { list-style: none; }
+        .nav-item { display: flex; align-items: center; gap: 15px; padding: 12px 16px; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 0.95rem; margin-bottom: 4px; }
+        .nav-item:hover { background: #f9fafb; color: var(--text-main); }
+        .nav-item.active { color: var(--accent); background: #f5f3ff; font-weight: 500; }
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; width: 100%; position: relative; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .btn { background-color: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 6px; user-select: none; }
+        .btn:hover { background-color: var(--accent); color: #fff; }
+        .btn-filled { background-color: var(--accent); color: #fff; border: 1px solid var(--accent); }
+        .btn-danger { color: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger); color: #fff; }
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            nav { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 20px; border-right: none; border-bottom: 1px solid var(--border-color); height: 60px; }
+            .logo { margin-bottom: 0; }
+            .nav-links { display: flex; }
+            .nav-item { padding: 6px 12px; margin-bottom: 0; }
+            .nav-item span { display: none; } 
+            main { padding: 16px; height: calc(100vh - 60px); }
+        }
+    </style>
+    <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="income.css">
+</head>
+<body>
+    <nav>
+        <div class="logo"><i class="fa-solid fa-receipt"></i><span>TYPO.BUDGET</span></div>
+        <ul class="nav-links">
+            <li class="nav-item active" data-tab="calendar"><i class="fa-regular fa-calendar-days"></i><span>Календарь</span></li>
+            <li class="nav-item" data-tab="income"><i class="fa-solid fa-wallet"></i><span>Доходы</span></li>
+            <li class="nav-item" data-tab="expense"><i class="fa-solid fa-money-bill-trend-up"></i><span>Расходы</span></li>
+            <li class="nav-item" data-tab="analytics"><i class="fa-solid fa-chart-pie"></i><span>Аналитика</span></li>
+            <li class="nav-item" data-tab="settings"><i class="fa-solid fa-gear"></i><span>Настройки</span></li>
+        </ul>
+    </nav>
+    <main>
+        <div id="tab-calendar" class="tab-content active"></div>
+        <div id="tab-income" class="tab-content"></div>
+        <div id="tab-expense" class="tab-content"></div>
+        <div id="tab-analytics-tab-container" class="tab-content"></div>
+        <div id="tab-settings" class="tab-content"></div>
+    </main>
+    <div id="global-confirm-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(2px);">
+        <div style="background: #fff; padding: 25px; border-radius: 12px; max-width: 380px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;">
+            <div style="width: 50px; height: 50px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fa-solid fa-trash-can" style="color: var(--danger); font-size: 1.3rem;"></i>
+            </div>
+            <h3 style="margin-bottom: 10px; font-weight: 600; font-size: 1.15rem;">Подтвердите действие</h3>
+            <p id="global-confirm-text" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; line-height: 1.4;"></p>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button id="global-confirm-cancel" class="btn" style="flex: 1; padding: 10px 0;">Отмена</button>
+                <button id="global-confirm-submit" class="btn btn-filled btn-danger" style="flex: 1; padding: 10px 0;">Удалить</button>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { CalendarModule } from './calendar.js';
+        import { IncomeModule } from './income.js';
+        import { ExpenseModule } from './expense.js';
+        import { AnalyticsModule } from './analytics.js';
+        import { SettingsModule } from './settings.js';
+
+        window.CalendarModule = CalendarModule;
+        window.IncomeModule = IncomeModule;
+        window.ExpenseModule = ExpenseModule;
+
+        // ========== ГЛОБАЛЬНЫЕ ФУНКЦИИ ДЛЯ РАБОТЫ С LOCALSTORAGE ==========
+        window.getFullAppState = function() {
+            return {
+                calendar: {
+                    dayData: window.CalendarModule?.state?.dayData || {},
+                    monthlyRates: window.CalendarModule?.state?.monthlyRates || {},
+                    currentYear: window.CalendarModule?.state?.currentYear,
+                    currentQuarter: window.CalendarModule?.state?.currentQuarter,
+                    currentMonth: window.CalendarModule?.state?.currentMonth,
+                    viewMode: window.CalendarModule?.state?.viewMode,
+                },
+                income: {
+                    accounts: window.IncomeModule?.state?.accounts || [],
+                    categories: window.IncomeModule?.state?.categories || [],
+                    manualTransactions: window.IncomeModule?.state?.manualTransactions || [],
+                },
+                expense: {
+                    categories: window.ExpenseModule?.state?.categories || [],
+                    debts: window.ExpenseModule?.state?.debts || [],
+                    transactions: window.ExpenseModule?.state?.transactions || [],
+                },
+                savedAt: new Date().toISOString()
+            };
+        };
+
+        window.applyFullAppState = function(state) {
+            if (!state) return false;
+            try {
+                if (window.CalendarModule?.state && state.calendar) {
+                    if (state.calendar.dayData) window.CalendarModule.state.dayData = state.calendar.dayData;
+                    if (state.calendar.monthlyRates) window.CalendarModule.state.monthlyRates = state.calendar.monthlyRates;
+                    if (state.calendar.currentYear !== undefined) window.CalendarModule.state.currentYear = state.calendar.currentYear;
+                    if (state.calendar.currentQuarter !== undefined) window.CalendarModule.state.currentQuarter = state.calendar.currentQuarter;
+                    if (state.calendar.currentMonth !== undefined) window.CalendarModule.state.currentMonth = state.calendar.currentMonth;
+                    if (state.calendar.viewMode) window.CalendarModule.state.viewMode = state.calendar.viewMode;
+                    if (window.CalendarModule.renderCalendar) window.CalendarModule.renderCalendar();
+                }
+                if (window.IncomeModule?.state && state.income) {
+                    if (state.income.accounts) window.IncomeModule.state.accounts = state.income.accounts;
+                    if (state.income.categories) window.IncomeModule.state.categories = state.income.categories;
+                    if (state.income.manualTransactions) window.IncomeModule.state.manualTransactions = state.income.manualTransactions;
+                    if (window.IncomeModule.syncCalendarTransactions) window.IncomeModule.syncCalendarTransactions();
+                    if (window.IncomeModule.calculateBalances) window.IncomeModule.calculateBalances();
+                    if (window.IncomeModule.renderAll) window.IncomeModule.renderAll();
+                }
+                if (window.ExpenseModule?.state && state.expense) {
+                    if (state.expense.categories) window.ExpenseModule.state.categories = state.expense.categories;
+                    if (state.expense.debts) window.ExpenseModule.state.debts = state.expense.debts;
+                    if (state.expense.transactions) window.ExpenseModule.state.transactions = state.expense.transactions;
+                    if (window.ExpenseModule.renderAll) window.ExpenseModule.renderAll();
+                }
+                if (window.AppState?.onExpenseUpdate) window.AppState.onExpenseUpdate();
+                if (window.AppState?.onCalendarUpdate) window.AppState.onCalendarUpdate();
+                return true;
+            } catch (e) {
+                console.error('Ошибка применения состояния:', e);
+                return false;
+            }
+        };
+
+        window.saveAppState = function() {
+            const state = window.getFullAppState();
+            localStorage.setItem('typo_full_backup', JSON.stringify(state));
+            console.log('💾 Автосохранение выполнено', new Date().toLocaleTimeString());
+        };
+
+        window.loadAppState = function() {
+            const raw = localStorage.getItem('typo_full_backup');
+            if (!raw) return false;
+            try {
+                const state = JSON.parse(raw);
+                console.log('📥 Загрузка из localStorage, дата:', state.savedAt);
+                return window.applyFullAppState(state);
+            } catch (e) {
+                console.error('Ошибка загрузки из localStorage:', e);
+                return false;
+            }
+        };
+
+        // Функция для модалки подтверждения
+        window.showConfirm = function(message, onConfirmCallback) {
+            const modal = document.getElementById('global-confirm-modal');
+            const textEl = document.getElementById('global-confirm-text');
+            const submitBtn = document.getElementById('global-confirm-submit');
+            const cancelBtn = document.getElementById('global-confirm-cancel');
+            textEl.innerText = message;
+            modal.style.display = 'flex';
+            const newSubmitBtn = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+            const closeModal = () => { modal.style.display = 'none'; };
+            newSubmitBtn.addEventListener('click', () => { onConfirmCallback(); closeModal(); });
+            cancelBtn.onclick = closeModal;
+            modal.onclick = (e) => { if(e.target === modal) closeModal(); };
+        };
+
+        window.AppState = {
+            get calendarData() { return window.CalendarModule?.state?.dayData || {}; },
+            set calendarData(val) { if (window.CalendarModule?.state) window.CalendarModule.state.dayData = val; },
+            get monthlyRates() { return window.CalendarModule?.state?.monthlyRates || {}; },
+            set monthlyRates(val) { if (window.CalendarModule?.state) window.CalendarModule.state.monthlyRates = val; },
+            monthNames: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+            onCalendarUpdate() {
+                if (window.IncomeModule?.syncCalendarTransactions) window.IncomeModule.syncCalendarTransactions();
+                if (window.IncomeModule?.renderAll) window.IncomeModule.renderAll();
+                window.saveAppState(); // автосохранение
+            },
+            onExpenseUpdate() {
+                if (window.IncomeModule?.calculateBalances) {
+                    window.IncomeModule.calculateBalances();
+                    window.IncomeModule.renderAccounts();
+                }
+                window.saveAppState(); // автосохранение
+            },
+            getAvailableAccounts() { return window.IncomeModule?.state?.accounts?.map(a => a.name) || []; },
+            getExpenseTransactions() { return window.ExpenseModule?.state?.transactions || []; },
+            triggerAutoSave() {
+                window.saveAppState();
+            }
+        };
+
+        window.onAnalyticsTabOpen = function() {
+            AnalyticsModule.init('tab-analytics-tab-container'); 
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            CalendarModule.init('tab-calendar');
+            IncomeModule.init('tab-income');
+            ExpenseModule.init('tab-expense');
+            SettingsModule.init('tab-settings');
+
+            // Автоматически загружаем сохранённые данные из localStorage
+            const loaded = window.loadAppState();
+            if (loaded) {
+                console.log('✅ Данные восстановлены из локальной копии');
+            } else {
+                console.log('ℹ️ Локальная копия не найдена, начинаем с пустого состояния');
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                    const tabId = item.getAttribute('data-tab');
+                    const targetId = tabId === 'analytics' ? 'tab-analytics-tab-container' : `tab-${tabId}`;
+                    document.getElementById(targetId).classList.add('active');
+                    if(tabId === 'income') IncomeModule.renderAll();
+                    if(tabId === 'expense') ExpenseModule.renderAll();
+                    if(tabId === 'analytics') window.onAnalyticsTabOpen();
+                    if(tabId === 'settings') SettingsModule.render();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
